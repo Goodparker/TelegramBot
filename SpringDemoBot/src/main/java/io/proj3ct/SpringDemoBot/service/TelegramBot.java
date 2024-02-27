@@ -47,7 +47,7 @@ public class TelegramBot extends TelegramLongPollingBot{
                     break;
 
                 default: sendMessage(chatId , "Sorry,there is no such command: " + messageText );
-                    System.out.println("Name: " + update.getMessage().getChat().getFirstName() + " " +update.getMessage().getChat().getLastName()+System.lineSeparator() +"Time: " + mytime+System.lineSeparator()+"Text: " +messageText );
+                    System.out.println("Name: " + update.getMessage().getChat().getFirstName() + " " + update.getMessage().getChat().getLastName() + System.lineSeparator() + "Time: " + mytime+System.lineSeparator() + "Text: " + messageText );
             }
         }
     }
