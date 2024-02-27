@@ -1,0 +1,6 @@
+io\proj3ct\SpringDemoBot\config\GoogleDocsService.class
+io\proj3ct\SpringDemoBot\config\BotConfig.class
+io\proj3ct\SpringDemoBot\config\BotInicializer.class
+io\proj3ct\SpringDemoBot\service\TelegramBot.class
+io\proj3ct\SpringDemoBot\SpringDemoBotApplication.class
+io\proj3ct\SpringDemoBot\service\Docss.class
