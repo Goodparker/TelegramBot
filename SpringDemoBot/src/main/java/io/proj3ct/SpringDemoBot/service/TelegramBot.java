@@ -1,6 +1,5 @@
 package io.proj3ct.SpringDemoBot.service;
 
-
 import com.vdurmont.emoji.EmojiParser;
 import io.proj3ct.SpringDemoBot.config.BotConfig;
 import org.jsoup.Jsoup;
@@ -18,27 +17,19 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import java.io.IOException;
 import java.util.*;
 
-
 @Component
 public class TelegramBot extends TelegramLongPollingBot{
-
-
-
     final BotConfig config;
-
+    //---------------------------------------------------------------------------------------------
     public TelegramBot(BotConfig config)
     {
         this.config = config;
     }
-
     @Override
     public String getBotUsername() { return config.getBotName(); }
-
     @Override
     public String getBotToken() { return config.getBotToken(); }
-
-
-
+    //---------------------------------------------------------------------------------------------
     @Override
     public void onUpdateReceived(Update update)
     {
@@ -60,6 +51,7 @@ public class TelegramBot extends TelegramLongPollingBot{
             }
         }
     }
+    //---------------------------------------------------------------------------------------------
     private void startCommandReceived(double chatId, String name, Date time)
     {
         String smile = EmojiParser.parseToUnicode(":heart:");
@@ -67,12 +59,12 @@ public class TelegramBot extends TelegramLongPollingBot{
 
         sendMessage(chatId, answer);
     }
-
+    //---------------------------------------------------------------------------------------------
     private void sendMessage(double chatId, String textToSend)
     {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
         message.setText(textToSend);
-
     }
 }
+//---------------------------------------------------------------------------------------------
