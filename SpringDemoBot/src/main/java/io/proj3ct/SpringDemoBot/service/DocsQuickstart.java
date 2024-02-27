@@ -70,8 +70,26 @@ public class DocsQuickstart {
         // Печатает заголовок запрошенного документа:
         Document response = service.documents().get(DOCUMENT_ID).execute();
         String title = response.getTitle();
-
+        String body = (response.getBody().getContent().toString());
         System.out.printf("The title of the doc is: %s\n", title);
+
+    //---------------------------------------------------------------------------------------------
+        List<StructuralElement> elements = response.getBody().getContent();
+        StringBuilder documentTextBuilder = new StringBuilder();
+
+        for (StructuralElement element : elements) {
+            if (element.getParagraph() != null) {
+                List<ParagraphElement> paragraphElements = element.getParagraph().getElements();
+                for (ParagraphElement paragraphElement : paragraphElements) {
+                    if (paragraphElement.getTextRun() != null) {
+                        documentTextBuilder.append(paragraphElement.getTextRun().getContent());
+                    }
+                }
+            }
+        }
+
+        String documentText = documentTextBuilder.toString();
+        System.out.println("Текст документа: " + documentText);
     }
     //---------------------------------------------------------------------------------------------
 }
