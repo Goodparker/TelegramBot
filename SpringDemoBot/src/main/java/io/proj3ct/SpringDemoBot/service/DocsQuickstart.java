@@ -25,68 +25,53 @@ import java.util.Collections;
 import java.util.List;
 
 public class DocsQuickstart {
+    //---------------------------------------------------------------------------------------------
     private static final String APPLICATION_NAME = "Test";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final String TOKENS_DIRECTORY_PATH = "55c188a83546fc188e51576ba72836e0600e8b73";
     private static final String DOCUMENT_ID = "1ea-nRoP4aNBSrAJ8Cm26gdcqq9fu_ltqAd7vV7gqHqk";
-
-    /**
-     * Global instance of the scopes required by this quickstart.
-     * If modifying these scopes, delete your previously saved tokens/ folder.
-     */
     private static final List<String> SCOPES = Collections.singletonList(DocsScopes.DOCUMENTS_READONLY);
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
-
-    /**
-     * Creates an authorized Credential object.
-     * @param HTTP_TRANSPORT The network HTTP Transport.
-     * @return An authorized Credential object.
-     * @throws IOException If the credentials.json file cannot be found.
-     */
+    //---------------------------------------------------------------------------------------------
     private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
-        // Load client secrets.
+        // Загрузка данных пользователя.
         InputStream in = DocsQuickstart.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         if (in == null) {
             throw new FileNotFoundException("Resource not found: " + CREDENTIALS_FILE_PATH);
         }
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
-        // Build flow and trigger user authorization request.
+        // Создаем поток и инициируем запрос авторизации пользователя.
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
-                .setAccessType("offline")
-                .build();
+                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH))).setAccessType("offline").build();
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
-    //---------------------------------------------
+    //---------------------------------------------------------------------------------------------
     private static void insertText(Docs service, String documentId, String text) throws IOException {
-        // Create a text paragraph
-        Paragraph paragraph = new Paragraph().setElements(Collections.singletonList(new TextRun().setText(text)));
+        // Создаем текстовый абзац
+        //  Paragraph paragraph = new Paragraph().setElements(Collections.singletonList(new TextRun().setText(text)));
 
-        // Create a request to insert the paragraph at the beginning of the document
+        // Создаем запрос на вставку абзаца в начало документа
         InsertTextRequest insertTextRequest = new InsertTextRequest().setText(text).setEndOfSegmentLocation(new EndOfSegmentLocation());
 
-        // Execute the request to insert the paragraph
+        // Выполняем запрос на вставку абзаца
         BatchUpdateDocumentRequest batchUpdateDocumentRequest = new BatchUpdateDocumentRequest().setRequests(
                 Collections.singletonList(new Request().setInsertText(insertTextRequest)));
         service.documents().batchUpdate(documentId, batchUpdateDocumentRequest).execute();
     }
-    //---------------------------------------------
-
+    //---------------------------------------------------------------------------------------------
     public static void main(String... args) throws IOException, GeneralSecurityException {
-        // Build a new authorized API client service.
+        // Создаем новую авторизованную клиентскую службу API.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-        Docs service = new Docs.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
-                .setApplicationName(APPLICATION_NAME)
-                .build();
+        Docs service = new Docs.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT)).setApplicationName(APPLICATION_NAME).build();
 
-        // Prints the title of the requested doc:
+        // Печатает заголовок запрошенного документа:
         Document response = service.documents().get(DOCUMENT_ID).execute();
         String title = response.getTitle();
-        String textToInsert = "This is a new paragraph added to_ the document.";
-        insertText(service, DOCUMENT_ID, textToInsert);
+
         System.out.printf("The title of the doc is: %s\n", title);
     }
+    //---------------------------------------------------------------------------------------------
 }
