@@ -83,7 +83,6 @@ public class DocsQuickstart {
                 .build();
 
         // Prints the title of the requested doc:
-        // https://docs.google.com/document/d/195j9eDD3ccgjQRttHhJPymLJUCOUjs-jmwTrekvdjFE/edit
         Document response = service.documents().get(DOCUMENT_ID).execute();
         String title = response.getTitle();
         String textToInsert = "This is a new paragraph added to_ the document.";
