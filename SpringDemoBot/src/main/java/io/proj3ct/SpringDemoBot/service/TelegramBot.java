@@ -46,46 +46,33 @@ public class TelegramBot extends TelegramLongPollingBot{
         {
             String messageText = update.getMessage().getText();
 
-            long chatId = update.getMessage().getChatId();
+            double chatId = update.getMessage().getChatId();
             Date mytime = new Date();
 
-            try {
-                switch (messageText)
-                {
-                    case "/start":
-                        startCommandReceived(chatId, update.getMessage().getChat().getFirstName(),mytime);
-                        break;
+            switch (messageText)
+            {
+                case "/start":
+                    startCommandReceived(chatId, update.getMessage().getChat().getFirstName(),mytime);
+                    break;
 
-
-                    default: sendMessage(chatId , "Sorry,there is no such command: " + messageText );
-                        System.out.println("Name: " + update.getMessage().getChat().getFirstName() + " " +update.getMessage().getChat().getLastName()+System.lineSeparator() +"Time: " + mytime+System.lineSeparator()+"Text: " +messageText );
-
-                }
-            } catch (IOException e) {
-                sendMessage(chatId, "An error occurred while fetching data from the website");
+                default: sendMessage(chatId , "Sorry,there is no such command: " + messageText );
+                    System.out.println("Name: " + update.getMessage().getChat().getFirstName() + " " +update.getMessage().getChat().getLastName()+System.lineSeparator() +"Time: " + mytime+System.lineSeparator()+"Text: " +messageText );
             }
-
-
         }
     }
-    private void startCommandReceived(long chatId, String name, Date time)
+    private void startCommandReceived(double chatId, String name, Date time)
     {
         String smile = EmojiParser.parseToUnicode(":heart:");
         String answer = "Hi, " + name + " " + smile;
 
         sendMessage(chatId, answer);
     }
-    
 
-
-
-
-
-
-    private void sendMessage(long chatId, String textToSend)
+    private void sendMessage(double chatId, String textToSend)
     {
         SendMessage message = new SendMessage();
         message.setChatId(String.valueOf(chatId));
-        message.setText(textToSend);   
+        message.setText(textToSend);
+
     }
 }
