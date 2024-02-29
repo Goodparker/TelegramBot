@@ -12,15 +12,18 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.docs.v1.Docs;
 import com.google.api.services.docs.v1.DocsScopes;
-import com.google.api.services.docs.v1.model.Body;
 import com.google.api.services.docs.v1.model.Document;
 import com.google.api.services.docs.v1.model.*;
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
+import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp.Browser;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +31,7 @@ public class DocsQuickstart {
     //---------------------------------------------------------------------------------------------
     private static final String APPLICATION_NAME = "Test";
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-    private static final String TOKENS_DIRECTORY_PATH = "55c188a83546fc188e51576ba72836e0600e8b73";
+    private static final String TOKENS_DIRECTORY_PATH = "d";
     private static final String DOCUMENT_ID = "1ea-nRoP4aNBSrAJ8Cm26gdcqq9fu_ltqAd7vV7gqHqk";
     private static final List<String> SCOPES = Collections.singletonList(DocsScopes.DOCUMENTS_READONLY);
     private static final String CREDENTIALS_FILE_PATH = "/credentials.json";
@@ -49,6 +52,7 @@ public class DocsQuickstart {
         return new AuthorizationCodeInstalledApp(flow, receiver).authorize("user");
     }
     //---------------------------------------------------------------------------------------------
+
     private static void insertText(Docs service, String documentId, String text) throws IOException {
         // Создаем текстовый абзац
         //  Paragraph paragraph = new Paragraph().setElements(Collections.singletonList(new TextRun().setText(text)));
@@ -62,7 +66,7 @@ public class DocsQuickstart {
         service.documents().batchUpdate(documentId, batchUpdateDocumentRequest).execute();
     }
     //---------------------------------------------------------------------------------------------
-    public static void main(String... args) throws IOException, GeneralSecurityException {
+    public static void start() throws IOException, GeneralSecurityException {
         // Создаем новую авторизованную клиентскую службу API.
         final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
         Docs service = new Docs.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT)).setApplicationName(APPLICATION_NAME).build();
@@ -87,6 +91,16 @@ public class DocsQuickstart {
                 }
             }
         }
+    //---------------------------------------------------------------------------------------------
+        List<Request> requests = Arrays.asList(new Request().setInsertText(new InsertTextRequest()
+                        .setText("Hello, World!\n")
+                        .setLocation(new Location().setIndex(1))
+                )
+        );
+        BatchUpdateDocumentRequest batchUpdateDocumentRequest = new BatchUpdateDocumentRequest().setRequests(requests);
+        service.documents().batchUpdate(DOCUMENT_ID, batchUpdateDocumentRequest).execute();
+
+
 
         String documentText = documentTextBuilder.toString();
         System.out.println("Текст документа: " + documentText);
