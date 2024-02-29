@@ -1,5 +1,12 @@
 package io.proj3ct.SpringDemoBot.service;
 
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.services.docs.v1.Docs;
+import com.google.api.services.docs.v1.model.BatchUpdateDocumentRequest;
+import com.google.api.services.docs.v1.model.InsertTextRequest;
+import com.google.api.services.docs.v1.model.Location;
+import com.google.api.services.docs.v1.model.Request;
 import com.vdurmont.emoji.EmojiParser;
 import io.proj3ct.SpringDemoBot.config.BotConfig;
 import org.jsoup.Jsoup;
@@ -29,42 +36,29 @@ public class TelegramBot extends TelegramLongPollingBot{
     public String getBotUsername() { return config.getBotName(); }
     @Override
     public String getBotToken() { return config.getBotToken(); }
+    String text;
     //---------------------------------------------------------------------------------------------
     @Override
-    public void onUpdateReceived(Update update)
-    {
-        if (update.hasMessage() && update.getMessage().hasText())
-        {
+    public void onUpdateReceived(Update update) {
+
+        if (update.hasMessage() && update.getMessage().hasText()) {
             String messageText = update.getMessage().getText();
 
-            double chatId = update.getMessage().getChatId();
-            Date mytime = new Date();
+            if (update.getMessage().getChat().isGroupChat()) {
 
-            switch (messageText)
-            {
-                case "/start":
-                    startCommandReceived(chatId, update.getMessage().getChat().getFirstName(),mytime);
-                    break;
+                String groupName = update.getMessage().getChat().getTitle();
+                String firstName = update.getMessage().getChat().getFirstName();
+                String lastName = update.getMessage().getChat().getLastName();
+                Date mytime = new Date();
+                 text = "Group: " + groupName + System.lineSeparator() +
+                        "Time: " + mytime + System.lineSeparator() +
+                        "User: " + firstName + " " + lastName + System.lineSeparator() +
+                        "Text: " + messageText;
 
-                default: sendMessage(chatId , "Sorry,there is no such command: " + messageText );
-                    System.out.println("Name: " + update.getMessage().getChat().getFirstName() + " " + update.getMessage().getChat().getLastName() + System.lineSeparator() + "Time: " + mytime+System.lineSeparator() + "Text: " + messageText );
+                System.out.println(text);
             }
         }
     }
     //---------------------------------------------------------------------------------------------
-    private void startCommandReceived(double chatId, String name, Date time)
-    {
-        String smile = EmojiParser.parseToUnicode(":heart:");
-        String answer = "Hi, " + name + " " + smile;
-
-        sendMessage(chatId, answer);
-    }
-    //---------------------------------------------------------------------------------------------
-    private void sendMessage(double chatId, String textToSend)
-    {
-        SendMessage message = new SendMessage();
-        message.setChatId(String.valueOf(chatId));
-        message.setText(textToSend);
-    }
 }
 //---------------------------------------------------------------------------------------------
